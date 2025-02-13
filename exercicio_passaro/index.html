@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+    <title>Eduardo Casarini</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      
+      //configuração do jogo na página da web (ex. largura e altura; renderizador da página da web)
+
+      var config = {
+        type: Phaser.AUTO, // renderizador de página da web automâtico
+        width: 800,  // largura
+        height: 600,  // altura
+        scene: {
+          preload: preload,  
+          create: create,  
+          update: update,  
+        },
+      };
+
+      // Criando novo jogo com base no framework Phaser
+
+      var game = new Phaser.Game(config);
+
+      // Definindo variável passarinho e coordenadas de checkpoints
+
+      var passarinho;
+      var checkpointX = [100, 700];
+      var checkpointY = [100, 500];
+
+      // Carregando recursos para o jogo
+
+      function preload() {
+        this.load.image("bg", "assets/bg_space.png"); // Carreguei a imagem do fundo
+        this.load.spritesheet("bird", "assets/bird-red.png", {  // Carreguei spritesheet do pássaro
+          frameWidth: 75,
+          frameHeight: 75,
+        }); 
+      }
+
+      // Criando e configurando elementos do jogo
+
+      function create() {
+        this.add.image(400, 300, "bg").setScale(1.2); // Coloco imagem de fundo no jogo e defino seu tamanho
+        passarinho = this.add.sprite(100, 300, "bird").setScale(1.3); // Coloco pássaro no jogo e defino seu tamanho
+        this.anims.create({  // Crio a animação de voar do pássaro
+          key: "fly", // Configuro o nome da animação
+          frames: this.anims.generateFrameNumbers("bird", { start: 0, end: 7 }), // Seleciono frames da animação e sua sequência
+          frameRate: 10, // Configuro FPS
+          repeat: -1, // Configuro para repetir infinitamente
+        });
+        passarinho.anims.play("fly", true); // Animação de voar no jogo
+      }
+
+      // Atualização em tempo real no jogo (loops)
+
+      function update() {
+        
+        // Movimentação do eixo X
+
+        // Se passarinho chegar à coordenada 100 ele vira sentido direita
+
+        if (passarinho.x === 100) {
+          passarinho.setFlip(false, false);
+          passarinho.ida = true;
+        }
+
+        // Movimentação do passarinho da coordenada 100 à 700 do sentido esquerda para direita
+
+        if (passarinho.x < 700 && passarinho.ida === true) {
+          console.log("O passarinho voa no sentido da direita até chegar à coordenada 700");
+          passarinho.x += 5;
+        }
+
+        // Se passarinho chegar à coordenada 700, ele vira sentido esquerda
+
+        if (passarinho.x === 700) {
+          passarinho.setFlip(true, false);
+          passarinho.ida = false;
+        }
+
+        // Movimentação do passarinho da coordenada 100 à 700 do sentido direita para esquerda
+
+        if (passarinho.x > 100 && passarinho.ida === false) {
+          console.log("O passarinho voa no sentido da esquerda até chegar à coordenada 100");
+          passarinho.x -= 5;
+        }
+
+        // Movimentação do eixo Y
+
+        // Se pássaro estiver na coordenada y (100); movimentação para cima é desligada
+
+        if (passarinho.y === 100) {
+          passarinho.subida = false;
+        }
+
+        // Se pássaro estiver na coordenada y (500); movimentação para cima é ligada
+
+        if (passarinho.y === 500) {
+          passarinho.subida = true;
+        }
+
+        // Configurei os movimentos de subida e descida do pássaro
+
+        if (passarinho.subida) {
+          passarinho.y -= 4;
+        } else {
+          passarinho.y += 4;
+        }
+
+        // Contador de checkpoints
+
+        for (var i = 0; i < checkpointX.length || i < checkpointY.length; i++) {
+          if (passarinho.x === checkpointX[i] || passarinho.y === checkpointY[i]) {
+            console.log(`O pássaro passou pelo ponto ${checkpointX[i] || checkpoint[i]}`)
+          }
+        }
+
+    }
+    </script>
+  </body>
+</html>
